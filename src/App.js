@@ -3,10 +3,11 @@ import './App.css';
 import React, { useEffect, useMemo, useRef } from 'react';
 import * as axios from 'axios';
 import { useTableContext } from './context/context';
-import Table from "./Table";
+import Table from "./components/Table";
 import StartWindow from './components/StartWindow';
 import Loader from './components/Loader';
 import UserPage from './components/UserPage';
+import styled from 'styled-components';
 
 function App() {
 
@@ -22,24 +23,47 @@ function App() {
         await getItems(result.data);
       })()
     }
-  }, [url, getItems]);
+  }, [url]);
 
   if (url === '') {
-    return <StartWindow />
+    return (
+        <StartWindow />
+    )
   }
 
   if (data.length === 0) {
     return (
-      <Loader />
+        <Loader />
     )
   }
 
   return (
-    <div>
+    <Wrapper>
       <Table columns={columns} data={data} />
       {user && <UserPage/>}
-    </div>
+    </Wrapper>
   );
 }
 
 export default App;
+
+const Wrapper = styled.div`
+margin: 0;
+padding:0;
+
+// width: 100vw;
+// height: 100vh;
+
+// width: auto
+// height: auto;
+
+width: 100%;
+height: 100%;
+
+// overflow-x: hidden;
+
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+`
