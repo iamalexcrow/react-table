@@ -1,19 +1,53 @@
-import React, {useState, useContext, useReducer} from 'react';
+import React, { useState, useContext, useReducer, useMemo } from 'react';
 import reducer from '../reducer/reducer';
-import {useAsyncDebounce} from "react-table";
-import { ADD_ITEM,
-        GRAB_DATA } from '../actions';
+import { useAsyncDebounce } from "react-table";
+import {
+    ADD_ITEM,
+    GRAB_DATA,
+    CHOOSE_URL,
+    SHOW_MORE
+} from '../actions';
 
 const initialState = {
-    data: []
+    data: [],
+    url: '',
+    user: ''
 }
 
 const TableContext = React.createContext()
 
-export const TableProvider = ({children})=> {
+export const TableProvider = ({ children }) => {
+
     const [state, dispatch] = useReducer(reducer, initialState);
     const [isFormOpen, setIsFormOpen] = useState(false);
 
+    const columns = useMemo(
+        () => [
+            {
+                Header: "Id",
+                accessor: "id"
+            },
+            {
+                Header: "firstName",
+                accessor: "firstName"
+            },
+            {
+                Header: "lastName",
+                accessor: "lastName"
+            },
+            {
+                Header: "email",
+                accessor: "email"
+            },
+            {
+                Header: "phone",
+                accessor: "phone"
+            },
+        ],
+        []
+    );
+
+    //Global filter function
     function GlobalFilter({
         preGlobalFilteredRows,
         globalFilter,
@@ -24,7 +58,7 @@ export const TableProvider = ({children})=> {
         const onChange = useAsyncDebounce(value => {
             setGlobalFilter(value || undefined)
         }, 200)
-        return(
+        return (
             <span>
                 Search:{' '}
                 <input
@@ -45,16 +79,23 @@ export const TableProvider = ({children})=> {
 
     //different actions
     const getItems = (items) => {
-        dispatch({type: GRAB_DATA, payload: items})
+        dispatch({ type: GRAB_DATA, payload: items })
     }
 
     const addItem = (newItem) => {
-        dispatch({type:ADD_ITEM, payload:{newItem}})
+        dispatch({ type: ADD_ITEM, payload: { newItem } })
     }
     // possibly useEffect for
-    //
-    return <TableContext.Provider value={{...state, addItem, isFormOpen, setIsFormOpen, GlobalFilter, getItems}}>{children}</TableContext.Provider>
+
+    const chooseUrl = (amount) => {
+        dispatch({ type: CHOOSE_URL, payload: { amount } })
+    }
+
+    const getMoreInfo = (id) => {
+        dispatch({ type: SHOW_MORE, payload: { id } })
+    }
+    return <TableContext.Provider value={{ ...state, columns, addItem, isFormOpen, setIsFormOpen, GlobalFilter, getItems, chooseUrl, getMoreInfo }}>{children}</TableContext.Provider>
 }
-export const useTableContext = ()=> {
+export const useTableContext = () => {
     return useContext(TableContext);
 }

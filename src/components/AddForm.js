@@ -1,41 +1,118 @@
-import React from 'react';
-import { useForm } from "react-hook-form";
-import {useTableContext} from '../context/context';
+import React, { useEffect, useState } from 'react';
+import { useTableContext } from '../context/context';
+import { Formik, Field, Form, ErrorMessage, useFormik, FormItem } from 'formik';
+import * as Yup from 'yup';
+import MaskedInput from "react-text-mask";
+
+
+const phoneNumberMask = [
+    "(",
+    /[1-9]/,
+    /\d/,
+    /\d/,
+    ")",
+    " ",
+    /\d/,
+    /\d/,
+    /\d/,
+    "-",
+    /\d/,
+    /\d/,
+    /\d/,
+    /\d/
+];
+
+const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
 const AddForm = () => {
-    const {addItem} = useTableContext();
+const {addItem} = useTableContext();
 
-    const { register, handleSubmit, watch, formState: {errors, isValid, isDirty } } = useForm();
-    const onSubmit = (data) => addItem(data);
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <Formik
+            initialValues={{ firstName: '', lastName: '', email: '' }}
+            validateOnMount
+            validationSchema={Yup.object({
+                id: Yup.number()
+                    .required('Required'),
+                firstName: Yup.string()
+                    .required('Required'),
+                lastName: Yup.string()
+                    .required('Required'),
+                email: Yup.string().email('Invalid email address').required('Required'),
+                phone: Yup.string().required('Required')
 
-            <label htmlFor="id">Id:</label>
-            <input type="number"{...register("id", { required: true, maxLength: 4 })} />
-            {errors.id && "Id is required"}
+            })}
+            onSubmit={(values, { setSubmitting }) => {
+                addItem(values);
+                console.log(values);
+            }}
+        >
+            {props => {
+                const {
+                    values,
+                    touched,
+                    errors,
+                    dirty,
+                    isSubmitting,
+                    handleChange,
+                    handleBlur,
+                    handleSubmit,
+                    handleReset,
+                    isValid
+                } = props;
+                return (
+                    <form onSubmit={handleSubmit}>
 
-            <label htmlFor="firstName">First name:</label>
-            <input type="text" {...register("firstName", { required: true })} />
-            {errors.firstName && "First name name is required"}
+                        <label htmlFor="id">First Name</label>
+                        <Field name="id" type="number" />
+                        <ErrorMessage name="id" />
 
-            <label htmlFor="lastName">Last name:</label>
-            <input type="text" {...register("lastName", { required: true })} />
-            {errors.lastName && "Last name is required"}
+                        <label htmlFor="firstName">First Name</label>
+                        <Field name="firstName" type="text" />
+                        <ErrorMessage name="firstName" />
 
-            <label htmlFor="email">Email:</label>
-            <input type="email"{...register("email", { required: true })} />
-            {errors.email && "email is required"}
+                        <label htmlFor="lastName">Last Name</label>
+                        <Field name="lastName" type="text" />
+                        <ErrorMessage name="lastName" />
 
-            <label htmlFor="number">Number:</label>
-            <input type="number" {...register("phone", { required: true })} />
-            {errors.number && "Phone Number name is required"}
+                        <label htmlFor="email">Email Address</label>
+                        <Field name="email" type="email" />
+                        <ErrorMessage name="email" />
 
-            <button disabled={!isDirty || !isValid}>ADD</button>
-            <button onClick={() => console.log(isDirty, isValid)}>ADddD</button>
-            {errors && <p>{errors.message}</p>}
+                        <label htmlFor="phone" style={{ display: "block" }}>Phone Number</label>
+                        <Field
+                            name="phone"
+                            render={({ field }) => (
+                                <MaskedInput
+                                    {...field}
+                                    mask={phoneNumberMask}
+                                    id="phone"
+                                    placeholder="Enter your phone number"
+                                    type="text"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    className={
+                                        errors.phone && touched.phone
+                                            ? "text-input error"
+                                            : "text-input"
+                                    }
+                                />
+                            )}
+                        />
 
-        </form>
-    )
-}
+                        {errors.phone && touched.phone && (
+                            <div className="input-feedback">{errors.phone}</div>
+                        )}
+
+                        <button type="submit" disabled={!isValid}>
+                            Submit
+                        </button>
+                    </form>
+                );
+            }}
+        </Formik>
+    );
+};
 
 export default AddForm;
+

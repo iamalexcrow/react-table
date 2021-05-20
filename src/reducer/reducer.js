@@ -1,4 +1,4 @@
-import { ADD_ITEM, GRAB_DATA } from "../actions";
+import { ADD_ITEM, GRAB_DATA, CHOOSE_URL, SHOW_MORE } from "../actions";
 
 const reducer= (state, action) => {
 if (action.type === GRAB_DATA) {
@@ -10,12 +10,28 @@ if (action.type === GRAB_DATA) {
 }
 
 if (action.type === ADD_ITEM) {
-    console.log(action.payload);
     return {
         ...state,
         data: [action.payload.newItem, ...state.data]
     } 
 }
+
+if (action.type === CHOOSE_URL) {
+    console.log(action.payload)
+    return {
+        ...state,
+        url: `http://www.filltext.com/?rows=${action.payload.amount}&id=%7Bnumber%7C1000%7D&firstName=%7BfirstName%7D&delay=3&lastName=%7BlastName%7D&email=%7Bemail%7D&phone=%7Bphone%7C(xxx)xxx-xx-xx%7D&address=%7BaddressObject%7D&description=%7Blorem%7C32%7D`
+    } 
+}
+
+if (action.type === SHOW_MORE) {
+    console.log(action.payload)
+    return {
+        ...state,
+        user: state.data.find(u => u.phone === action.payload.id)
+    } 
+}
+
 // return state
   throw new Error(`No Matching "${action.type}" - action type`)
 }

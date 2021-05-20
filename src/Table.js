@@ -4,7 +4,7 @@ import { useTableContext } from './context/context';
 import AddForm from './components/AddForm';
 
 export default function Table({ columns, data }) {
-    const { GlobalFilter, isFormOpen, setIsFormOpen } = useTableContext();
+    const { GlobalFilter, isFormOpen, setIsFormOpen, getMoreInfo } = useTableContext();
     const {
         getTableProps,
         getTableBodyProps,
@@ -62,6 +62,15 @@ export default function Table({ columns, data }) {
                                     }
                                 >
                                     {column.render("Header")}
+                                    <span>
+                                        {column.isSorted
+                                            ? column.isSortedDesc
+                                                ? " 🔽"
+                                                : " 🔼"
+                                            : column.canSort
+                                                ? "⏺"
+                                                : ""}
+                                    </span>
                                 </th>
                             ))}
                         </tr>
@@ -72,7 +81,7 @@ export default function Table({ columns, data }) {
                     {page.map((row, i) => {
                         prepareRow(row);
                         return (
-                            <tr {...row.getRowProps()}>
+                            <tr onClick={() => getMoreInfo(row.original.phone)}{...row.getRowProps()}>
                                 {row.cells.map(cell => {
                                     return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
                                 })}
