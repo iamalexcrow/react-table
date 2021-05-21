@@ -1,4 +1,4 @@
-import { ADD_ITEM, GRAB_DATA, CHOOSE_URL, SHOW_MORE, CLOSE_WINDOW } from "../actions";
+import { ADD_ITEM, GRAB_DATA, CHOOSE_URL, SHOW_MORE, CLOSE_WINDOW } from "./actions";
 
 const reducer = (state, action) => {
     if (action.type === GRAB_DATA) {

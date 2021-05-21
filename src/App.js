@@ -1,25 +1,21 @@
 import './App.css';
 import React, { useEffect, useState } from 'react';
-import * as axios from 'axios';
+
 import { useTableContext } from './context/context';
-import Table from "./components/Table";
+import Table from "./components/Table/Table";
 import StartWindow from './components/StartWindow';
 import Loader from './components/Loader';
 import UserPage from './components/UserPage';
 import styled from 'styled-components';
+import getData from './api/api';
 
 function App() {
-
   const { getItems, data, columns, url, user } = useTableContext();
-  
   useEffect(() => {
     if (url === '') {
       return
     } else {
-        (async () => {
-          const result = await axios(url);
-          await getItems(result.data);
-        })()
+        getData(url,getItems);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url]);
