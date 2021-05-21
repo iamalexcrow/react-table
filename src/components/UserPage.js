@@ -8,7 +8,7 @@ const UserPage = () => {
         <Wrapper>
             <Close onClick={()=>closeWindow()}>&#x274C;</Close>
             <h2> more details </h2>
-            <div>Chosen user: <b>{user.firstName}</b></div>
+            <div>User chosen: <b>{user.firstName}</b></div>
             <div>
                 <div>Description:</div>
                 <Textarea  readOnly value={user.description}/>

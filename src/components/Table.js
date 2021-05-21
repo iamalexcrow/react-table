@@ -127,7 +127,7 @@ export default function TableForm({ columns, data }) {
                             return (
                                 <TableRow onClick={() => getMoreInfo(row.original.phone)}{...row.getRowProps()}>
                                     {row.cells.map(cell => {
-                                        return <TableCell {...cell.getCellProps()}>{cell.render("Cell")}</TableCell>;
+                                        return <TableCell style={{cursor:'pointer'}}{...cell.getCellProps()}>{cell.render("Cell")}</TableCell>;
                                     })}
                                 </TableRow>
                             );
@@ -174,15 +174,23 @@ button {
     border-radius: 2px;
     color: #010100;
     margin: 0 1px 0 1px;
+    background: white;
+    cursor: pointer;
 }
 div {
     text-align: center;
     margin: auto;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 select {
     border: 2px solid #010100;
     border-radius: 2px;
     outline: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 0 5px;
+    cursor: pointer;
 }
 `
 
