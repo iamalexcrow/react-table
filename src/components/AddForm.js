@@ -22,14 +22,12 @@ const phoneNumberMask = [
     /\d/
 ];
 
-const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
-
 const AddForm = () => {
     const { addItem } = useTableContext();
 
     return (
         <Formik
-            initialValues={{ firstName: '', lastName: '', email: '' }}
+            initialValues={{ id: '', firstName: '', lastName: '', email: '', phone: '' }}
             validateOnMount
             validationSchema={Yup.object({
                 id: Yup.number()
@@ -42,27 +40,23 @@ const AddForm = () => {
                 phone: Yup.string().required('This field is required')
 
             })}
-            onSubmit={(values, { setSubmitting }) => {
+            onSubmit={(values, onSubmitProps) => {
                 addItem(values);
+                onSubmitProps.resetForm();
                 console.log(values);
             }}
         >
             {props => {
                 const {
-                    values,
                     touched,
                     errors,
-                    dirty,
-                    isSubmitting,
                     handleChange,
                     handleBlur,
                     handleSubmit,
-                    handleReset,
                     isValid
                 } = props;
                 return (
                     <FormWrapper onSubmit={handleSubmit}>
-
                         <FieldWrapper>
                             <label htmlFor="id">Id</label>
                             <Field name="id" type="number" placeholder="Enter id of a hacked person" />
@@ -70,7 +64,6 @@ const AddForm = () => {
                                 <p>{errors.id}</p>
                             ) : null}
                         </FieldWrapper>
-
                         <FieldWrapper>
                             <label htmlFor="firstName"> First Name</label>
                             <Field name="firstName" type="text" placeholder="Enter first name of a hacked person" />
@@ -78,7 +71,6 @@ const AddForm = () => {
                                 <p>{errors.firstName}</p>
                             ) : null}
                         </FieldWrapper>
-
                         <FieldWrapper>
                             <label htmlFor="lastName">Last Name</label>
                             <Field name="lastName" type="text" placeholder="Enter last name of a hacked person" />
@@ -86,7 +78,6 @@ const AddForm = () => {
                                 <p>{errors.lastName}</p>
                             ) : null}
                         </FieldWrapper>
-
                         <FieldWrapper>
                             <label htmlFor="email">Email Address</label>
                             <Field name="email" type="email" placeholder="Enter email of a hacked person" />
@@ -94,7 +85,6 @@ const AddForm = () => {
                                 <p>{errors.email}</p>
                             ) : null}
                         </FieldWrapper>
-
                         <FieldWrapper>
                             <label htmlFor="phone">Phone Number</label>
                             <Field
@@ -116,12 +106,10 @@ const AddForm = () => {
                                     />
                                 )}
                             />
-
                             {touched.phone && errors.phone ? (
                                 <p>{errors.phone}</p>
                             ) : null}
                         </FieldWrapper>
-
                         <FieldWrapper>
                             <Button type="submit" disabled={!isValid}>
                                 SUBMIT
@@ -177,8 +165,11 @@ const FieldWrapper = styled.div`
 width: 100%;
 margin-top: 10px;
 label {
+    text-transform: uppercase;
+    letter-spacing: 2px;
     display:block;
     margin: 0 0 5px 15px;
+    font-weight:bold;
 }
 input {
     height: 30px;
@@ -188,11 +179,16 @@ input {
     padding: 0 0 0 15px;
     border: 1px solid #010100;
     border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 p {
     color: red;
     padding: 0px;
     margin: 3px 0 0 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 0 0 0 15px;
 }
 button {
     width: 100%;

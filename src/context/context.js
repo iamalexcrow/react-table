@@ -1,12 +1,13 @@
 import React, { useState, useContext, useReducer, useMemo } from 'react';
 import reducer from '../reducer/reducer';
 import { useAsyncDebounce } from "react-table";
-import styled, {css} from 'styled-components';
+import styled, { css } from 'styled-components';
 import {
     ADD_ITEM,
     GRAB_DATA,
     CHOOSE_URL,
-    SHOW_MORE
+    SHOW_MORE,
+    CLOSE_WINDOW
 } from '../actions';
 
 const initialState = {
@@ -19,9 +20,23 @@ const TableContext = React.createContext()
 
 export const TableProvider = ({ children }) => {
 
+    // context 
     const [state, dispatch] = useReducer(reducer, initialState);
     const [isFormOpen, setIsFormOpen] = useState(false);
 
+    // function for opening and closing the add a new user form
+    const triggerForm = ()=> {
+        try {
+            if (isFormOpen) {
+                setIsFormOpen(false)
+            } else {
+                setIsFormOpen(true)
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    // columns object needed for React table 
     const columns = useMemo(
         () => [
             {
@@ -48,7 +63,7 @@ export const TableProvider = ({ children }) => {
         []
     );
 
-    //Global filter function
+    //Global filter function for React Table
     function GlobalFilter({
         preGlobalFilteredRows,
         globalFilter,
@@ -59,25 +74,25 @@ export const TableProvider = ({ children }) => {
         const onChange = useAsyncDebounce(value => {
             setGlobalFilter(value || undefined)
         }, 200)
+
+        if (value === '') {
+            onChange(value);
+        }
         return (
             <Wrapper>
                 <h4>Search through :{' '}</h4>
                 <SearchBar>
-                <Input
-                    value={value || ""}
-                    onChange={e => {
-                        setValue(e.target.value);
-                        onChange(e.target.value);
-                    }}
-                    placeholder={`${count} hacked users...`}
-                    style={{
-                        fontSize: '1.1rem',
-                        // border: '2px solid #4966aa',
-                        // borderRadius: '20px',
-                        // outline: none;
-                    }}
-                />
-                <Button>SEARCH</Button>
+                    <Input
+                        value={value || ""}
+
+                        onChange={e => {
+                            setValue(e.target.value);
+                            //functionality for filtering onChange
+                            // onChange(e.target.value);
+                        }}
+                        placeholder={`${count} hacked users...`}
+                    />
+                    <Button onClick={() => onChange(value)}>SEARCH</Button>
                 </SearchBar>
             </Wrapper>
         )
@@ -87,26 +102,28 @@ export const TableProvider = ({ children }) => {
     const getItems = (items) => {
         dispatch({ type: GRAB_DATA, payload: items })
     }
-
     const addItem = (newItem) => {
         dispatch({ type: ADD_ITEM, payload: { newItem } })
     }
-    // possibly useEffect for
-
     const chooseUrl = (amount) => {
         dispatch({ type: CHOOSE_URL, payload: { amount } })
     }
-
     const getMoreInfo = (id) => {
         dispatch({ type: SHOW_MORE, payload: { id } })
     }
-    return <TableContext.Provider value={{ ...state, columns, addItem, isFormOpen, setIsFormOpen, GlobalFilter, getItems, chooseUrl, getMoreInfo }}>{children}</TableContext.Provider>
+    const closeWindow = () => {
+        dispatch({ type: CLOSE_WINDOW })
+    }
+
+    return <TableContext.Provider value={{ ...state, columns, addItem, isFormOpen, setIsFormOpen, GlobalFilter, getItems, chooseUrl, getMoreInfo, closeWindow, triggerForm }}>{children}</TableContext.Provider>
 }
 export const useTableContext = () => {
     return useContext(TableContext);
 }
 
-const SearchBar =styled.div`
+
+//STYLD COMPONENTS
+const SearchBar = styled.div`
 display:flex;`
 
 const Input = styled.input`

@@ -11,8 +11,8 @@ const StartWindow = () => {
             </h1>
             <h2>How many users do you want to hack today?</h2>
             <div>
-                <Button variant="contained" color="primary" onClick={() => chooseUrl(32)}>Hack a few!</Button>
-                <Button variant="contained" color="primary" onClick={() => chooseUrl(1000)}>Hack a lot!</Button>
+                <Button variant="contained" color="primary" onClick={() => chooseUrl(32)}>a few!</Button>
+                <Button variant="contained" color="primary" onClick={() => chooseUrl(1000)}>a lot!</Button>
             </div>
             </div>
         </Wrapper>

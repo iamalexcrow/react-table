@@ -4,7 +4,6 @@ import { useTableContext } from '../context/context';
 import AddForm from './AddForm';
 import styled from 'styled-components';
 
-import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -16,7 +15,7 @@ import Paper from '@material-ui/core/Paper';
 
 
 export default function TableForm({ columns, data }) {
-    const { GlobalFilter, isFormOpen, setIsFormOpen, getMoreInfo } = useTableContext();
+    const { GlobalFilter, isFormOpen, getMoreInfo, triggerForm } = useTableContext();
     const {
         getTableProps,
         getTableBodyProps,
@@ -39,7 +38,7 @@ export default function TableForm({ columns, data }) {
     } = useTable({
         columns,
         data,
-        initialState: { pageIndex: 0, pageSize: 50 }
+        initialState: { pageIndex: 0, pageSize: 20 }
     },
         useFilters,
         useGlobalFilter,
@@ -48,7 +47,6 @@ export default function TableForm({ columns, data }) {
 
     return (
         <Wrapper>
-            
             <SearchBar>
                 <GlobalFilter
                     preGlobalFilteredRows={preGlobalFilteredRows}
@@ -56,17 +54,14 @@ export default function TableForm({ columns, data }) {
                     setGlobalFilter={setGlobalFilter}
                 />
             </SearchBar>
-
             <AddFields>
-                <Button onClick={() => setIsFormOpen(true)}>Add a Hacked user</Button>
+                <Button onClick={() => triggerForm()}>{!isFormOpen ? 'Add a Hacked user' : 'Close form'}</Button>
                 {isFormOpen && <AddForm />}
             </AddFields>
-
             <Paginator className="pagination">
                 <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
                     {'<<'}
                 </button>{' '}
-
                 <button onClick={() => previousPage()} disabled={!canPreviousPage}>
                     {'<'}
                 </button>{' '}
@@ -76,16 +71,12 @@ export default function TableForm({ columns, data }) {
                         {pageIndex + 1} of {pageOptions.length}
                     </strong>{' '}
                 </div>
-
-
                 <button onClick={() => nextPage()} disabled={!canNextPage}>
                     {'>'}
                 </button>{' '}
                 <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
                     {'>>'}
                 </button>{' '}
-                
-
                 <select
                     value={pageSize}
                     onChange={e => {
@@ -101,7 +92,6 @@ export default function TableForm({ columns, data }) {
             </Paginator>
             <TableContainer component={Paper}>
                 <Table  aria-label="simple table"{...getTableProps()}>
-
                     <TableHead>
                         {headerGroups.map(headerGroup => (
                             <TableRow {...headerGroup.getHeaderGroupProps()}>
@@ -131,7 +121,6 @@ export default function TableForm({ columns, data }) {
                             </TableRow>
                         ))}
                     </TableHead>
-
                     <TableBody {...getTableBodyProps()}>
                         {page.map((row, i) => {
                             prepareRow(row);
@@ -144,11 +133,8 @@ export default function TableForm({ columns, data }) {
                             );
                         })}
                     </TableBody>
-
                 </Table>
             </TableContainer>
-
-            
         </Wrapper>
     );
 }
@@ -165,7 +151,6 @@ span {
     }
 }
 `
-
 const AddFields = styled.div`
 `
 
@@ -174,10 +159,10 @@ margin-top: 50px;
 max-width: 900px;
 height: auto;
 bakground: white;
+margin: 10px 0;
 `
 
 const Paginator = styled.div`
-
 padding: 2px;
 display: flex;
 height: 30px;
@@ -221,7 +206,6 @@ const Button = styled.button`
     transition: 0.05s;
     margin-bottom: 10px;
     border-radius: 5px;
-
     :hover {
         transition:0.05s;
         border: 2px solid #4966aa;

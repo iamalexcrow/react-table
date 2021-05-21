@@ -1,6 +1,5 @@
-import logo from './logo.svg';
 import './App.css';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as axios from 'axios';
 import { useTableContext } from './context/context';
 import Table from "./components/Table";
@@ -12,31 +11,34 @@ import styled from 'styled-components';
 function App() {
 
   const { getItems, data, columns, url, user } = useTableContext();
-
+  
   useEffect(() => {
     if (url === '') {
       return
     } else {
-      (async () => {
-        console.log('goes')
-        const result = await axios(url);
-        await getItems(result.data);
-      })()
+        (async () => {
+          const result = await axios(url);
+          await getItems(result.data);
+        })()
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url]);
 
+  // START WINDOW
   if (url === '') {
     return (
         <StartWindow />
     )
   }
 
+  // SHOW A LOADER WHEN DATA IS FETCHING
   if (data.length === 0) {
     return (
         <Loader />
     )
   }
 
+  // SHOW TABLE WITH USERS WHENFETCH IS DONE
   return (
     <Wrapper>
       <Table columns={columns} data={data} />
@@ -47,23 +49,14 @@ function App() {
 
 export default App;
 
+//STYLED COMPONENTS
 const Wrapper = styled.div`
-margin: 0;
-padding:0;
-
-// width: 100vw;
-// height: 100vh;
-
-// width: auto
-// height: auto;
-
-width: 100%;
-height: 100%;
-
-// overflow-x: hidden;
-
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
+  margin: 0;
+  padding:0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 `
